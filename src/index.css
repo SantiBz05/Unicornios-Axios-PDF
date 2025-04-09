@@ -1,111 +1,131 @@
-/* Reset */
+/* 🎨 Variables mágicas */
+:root {
+  --color-bg: #121212;
+  --color-surface: #1e1e2f;
+  --color-card: #2a2a40;
+  --color-primary: #a78bfa;
+  --color-secondary: #f472b6;
+  --color-text: #e5e7eb;
+  --color-muted: #9ca3af;
+  --color-accent: #38bdf8;
+  --color-warning: #facc15;
+  --color-success: #4ade80;
+
+  --radius: 12px;
+  --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* 🌌 Base */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Variables mágicas */
-:root {
-  --color-bg: #121212;
-  --color-surface: #1e1e2f;
-  --color-card: #2a2a40;
-  --color-primary: #a78bfa; /* lavanda */
-  --color-secondary: #f472b6; /* rosa unicornio */
-  --color-text: #e5e7eb;
-  --color-muted: #9ca3af;
-  --color-accent: #38bdf8;
-
-  --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-/* Body mágico */
 body {
   font-family: var(--font-main);
   background-color: var(--color-bg);
   color: var(--color-text);
-  min-height: 100vh;
   padding: 2rem;
+  min-height: 100vh;
+  line-height: 1.6;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Root app */
-#root {
+/* 📦 Layout */
+.container {
   max-width: 1200px;
   margin: 0 auto;
+  padding: 1rem;
 }
 
-/* Títulos con power */
+.section {
+  background-color: var(--color-surface);
+  padding: 2rem;
+  border-radius: var(--radius);
+  margin-bottom: 2rem;
+  box-shadow: 0 0 20px rgba(167, 139, 250, 0.1);
+}
+
+/* 🦄 Titulares */
 h1, h2, h3 {
   color: var(--color-primary);
   margin-bottom: 1rem;
-  font-weight: 700;
+  font-weight: bold;
+  text-shadow: 0 0 4px rgba(167, 139, 250, 0.4);
 }
 
-/* Etiquetas e inputs */
+/* ✨ Inputs y formularios */
 label {
-  display: block;
-  font-weight: 500;
-  margin-bottom: 0.5rem;
+  font-weight: 600;
   color: var(--color-muted);
+  margin-bottom: 0.5rem;
+  display: block;
 }
 
-input, .p-inputtext, .p-inputnumber {
+input, select, textarea, .p-inputtext, .p-inputnumber input {
   width: 100%;
   padding: 0.75rem;
   font-size: 1rem;
-  border-radius: 10px;
+  border-radius: var(--radius);
+  border: 1px solid #333;
   background-color: var(--color-card);
   color: var(--color-text);
-  border: 1px solid #444;
   margin-bottom: 1rem;
 }
 
-/* Botones místicos */
+/* ⚡ Botones mágicos */
 button, .p-button {
-  border-radius: 10px;
-  padding: 0.6em 1.2em;
-  font-weight: 600;
   background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  color: #fff;
   border: none;
-  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius);
+  font-weight: bold;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 button:hover, .p-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
+  box-shadow: 0 6px 16px rgba(244, 114, 182, 0.2);
 }
 
-/* Tabla unicornio */
+/* 🪄 Tablas mágicas */
 .p-datatable {
-  margin-top: 2rem;
-  border-radius: 16px;
+  border-radius: var(--radius);
   overflow: hidden;
-  background-color: var(--color-surface);
-  box-shadow: 0 0 20px rgba(167, 139, 250, 0.2);
+  box-shadow: 0 0 16px rgba(167, 139, 250, 0.1);
+  margin-top: 2rem;
 }
 
 .p-datatable .p-datatable-thead > tr > th {
   background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
   color: white;
-  font-weight: bold;
-  text-align: left;
   padding: 1rem;
+  text-align: left;
+  font-weight: bold;
 }
 
 .p-datatable .p-datatable-tbody > tr > td {
   padding: 1rem;
-  border-color: #333;
   background-color: var(--color-card);
+  border-color: #333;
 }
 
-/* Animaciones suaves */
-.fade-in {
-  animation: fadeIn 0.5s ease-in-out;
+/* 📱 Responsive helpers */
+@media (max-width: 768px) {
+  .section {
+    padding: 1rem;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
 }
 
-@keyframes fadeIn {
+/* ✨ Animaciones suaves */
+@keyframes fadeInUp {
   from {
     opacity: 0;
     transform: translateY(10px);
@@ -116,28 +136,31 @@ button:hover, .p-button:hover {
   }
 }
 
-/* Contenedores mágicos */
-.section {
-  background-color: var(--color-surface);
-  padding: 2rem;
-  border-radius: 16px;
-  margin-bottom: 2rem;
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.05);
+.fade-in {
+  animation: fadeInUp 0.4s ease-in-out;
 }
 
-/* Enlaces mágicos */
+/* 🌈 Detalles */
+hr {
+  border: none;
+  height: 1px;
+  background-color: var(--color-muted);
+  margin: 2rem 0;
+}
+
 a {
   color: var(--color-accent);
   text-decoration: none;
+  transition: color 0.2s ease;
 }
 a:hover {
+  color: var(--color-secondary);
   text-decoration: underline;
 }
 
-/* Footer opcional */
 footer {
   text-align: center;
   margin-top: 4rem;
   color: var(--color-muted);
-  font-size: 0.875rem;
+  font-size: 0.9rem;
 }
