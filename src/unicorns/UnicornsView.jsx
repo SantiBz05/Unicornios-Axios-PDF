@@ -1,9 +1,9 @@
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
-import { Button } from 'primereact/button';
-import { InputText } from 'primereact/inputtext';
-import { InputNumber } from 'primereact/inputnumber';
 import { useState } from "react";
+import { Button } from 'primereact/button';
+import { Column } from 'primereact/column';
+import { DataTable } from 'primereact/datatable';
+import { InputNumber } from 'primereact/inputnumber';
+import { InputText } from 'primereact/inputtext';
 
 const UnicornsView = ({
     handleAddUnicorn,
@@ -38,6 +38,11 @@ const UnicornsView = ({
     };
 
     const onAdd = () => {
+        if (!name || !color || !age || !power) {
+            alert("Todos los campos son obligatorios.");
+            return;
+        }
+
         handleAddUnicorn({ name, color, age, power });
         clearForm();
     };
@@ -45,6 +50,11 @@ const UnicornsView = ({
     const onEdit = () => {
         if (!selectedUnicorn?._id) {
             alert("Selecciona un unicornio para editar.");
+            return;
+        }
+
+        if (!name || !color || !age || !power) {
+            alert("Todos los campos son obligatorios.");
             return;
         }
 
@@ -60,10 +70,6 @@ const UnicornsView = ({
 
         handleDeleteUnicorn(selectedUnicorn._id);
         clearForm();
-    };
-
-    const onGet = () => {
-        handleGetUnicorns();
     };
 
     const clearForm = () => {
@@ -101,7 +107,6 @@ const UnicornsView = ({
                 <Button label="Agregar" icon="pi pi-plus" onClick={onAdd} />
                 <Button label="Editar" icon="pi pi-pencil" onClick={onEdit} severity="warning" disabled={!selectedUnicorn} />
                 <Button label="Eliminar" icon="pi pi-trash" onClick={onDelete} severity="danger" disabled={!selectedUnicorn} />
-                <Button label="Obtener" icon="pi pi-download" onClick={onGet} severity="info" />
             </div>
 
             <DataTable

@@ -1,3 +1,3 @@
-import UnicornsContainer from "./UnicornsContainer"
+import UnicornsContainer from "./UnicornsContainer";
 
-export default UnicornsContainer
+export default UnicornsContainer;

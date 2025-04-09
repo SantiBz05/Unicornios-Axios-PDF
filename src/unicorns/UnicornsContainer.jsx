@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import UnicornsView from "./UnicornsView";
 
 const API_URL = "https://crudcrud.com/api/4e22aa362d6a43f291d49d99ea9f6a39/unicorns";
@@ -6,14 +6,18 @@ const API_URL = "https://crudcrud.com/api/4e22aa362d6a43f291d49d99ea9f6a39/unico
 const UnicornsContainer = () => {
     const [unicorns, setUnicorns] = useState([]);
 
+    useEffect(() => {
+        handleGetUnicorns();
+    }, []);
+
     const handleGetUnicorns = () => {
         fetch(API_URL)
             .then((response) => response.json())
-            .then((data) => {
-                console.log("Unicornios obtenidos", data);
-                setUnicorns(data);
-            })
-            .catch((error) => console.error("Error al obtener unicornios", error));
+            .then((data) => setUnicorns(data))
+            .catch((error) => {
+                console.error("Error al obtener unicornios", error);
+                alert("Error al obtener los unicornios.");
+            });
     };
 
     const handleAddUnicorn = ({ name, color, age, power }) => {
@@ -33,10 +37,12 @@ const UnicornsContainer = () => {
         })
             .then((response) => response.json())
             .then((data) => {
-                console.log("Unicornio añadido:", data);
                 setUnicorns([...unicorns, data]);
             })
-            .catch((error) => console.error("Error al añadir el unicornio", error));
+            .catch((error) => {
+                console.error("Error al añadir el unicornio", error);
+                alert("Error al añadir el unicornio.");
+            });
     };
 
     const handleEditUnicorn = ({ id, name, color, age, power }) => {
@@ -61,9 +67,11 @@ const UnicornsContainer = () => {
                         : unic
                 );
                 setUnicorns(updated);
-                console.log("Unicornio editado.");
             })
-            .catch((error) => console.error("Error al editar el unicornio", error));
+            .catch((error) => {
+                console.error("Error al editar el unicornio", error);
+                alert("Error al editar el unicornio.");
+            });
     };
 
     const handleDeleteUnicorn = (id) => {
@@ -71,10 +79,12 @@ const UnicornsContainer = () => {
             method: "DELETE",
         })
             .then(() => {
-                console.log("Unicornio eliminado");
                 setUnicorns(unicorns.filter((unic) => unic._id !== id));
             })
-            .catch((error) => console.error("Error al eliminar el unicornio", error));
+            .catch((error) => {
+                console.error("Error al eliminar el unicornio", error);
+                alert("Error al eliminar el unicornio.");
+            });
     };
 
     return (

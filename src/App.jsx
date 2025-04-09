@@ -1,19 +1,13 @@
-import { useState } from 'react'
-import './App.css'
-import UnicornsContainer from './unicorns'
-import 'primereact/resources/themes/lara-light-indigo/theme.css'; // o cualquier otro tema
-import 'primereact/resources/primereact.min.css';
-import 'primeicons/primeicons.css';
-import 'primereact/resources/themes/lara-light-indigo/theme.css'; 
-import 'primereact/resources/primereact.min.css';
-import 'primeicons/primeicons.css';
-
+import { Routes, Route, Navigate } from "react-router-dom";
+import UnicornsContainer from "./unicorns";
 
 function App() {
-
   return (
-    <UnicornsContainer />
-  )
+    <Routes>
+      <Route path="/" element={<Navigate to="/unicornios" />} />
+      <Route path="/unicornios" element={<UnicornsContainer />} />
+    </Routes>
+  );
 }
 
-export default App
+export default App;
