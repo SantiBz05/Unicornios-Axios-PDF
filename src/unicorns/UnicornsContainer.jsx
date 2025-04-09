@@ -1,0 +1,91 @@
+import { useState } from "react";
+import UnicornsView from "./UnicornsView";
+
+const API_URL = "https://crudcrud.com/api/4e22aa362d6a43f291d49d99ea9f6a39/unicorns";
+
+const UnicornsContainer = () => {
+    const [unicorns, setUnicorns] = useState([]);
+
+    const handleGetUnicorns = () => {
+        fetch(API_URL)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log("Unicornios obtenidos", data);
+                setUnicorns(data);
+            })
+            .catch((error) => console.error("Error al obtener unicornios", error));
+    };
+
+    const handleAddUnicorn = ({ name, color, age, power }) => {
+        fetch(API_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                name,
+                data: {
+                    color,
+                    age: Number(age),
+                    power,
+                },
+            }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log("Unicornio añadido:", data);
+                setUnicorns([...unicorns, data]);
+            })
+            .catch((error) => console.error("Error al añadir el unicornio", error));
+    };
+
+    const handleEditUnicorn = ({ id, name, color, age, power }) => {
+        fetch(`${API_URL}/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                name,
+                data: {
+                    color,
+                    age: Number(age),
+                    power,
+                },
+            }),
+        })
+            .then(() => {
+                const updated = unicorns.map((unic) =>
+                    unic._id === id
+                        ? { ...unic, name, data: { color, age, power } }
+                        : unic
+                );
+                setUnicorns(updated);
+                console.log("Unicornio editado.");
+            })
+            .catch((error) => console.error("Error al editar el unicornio", error));
+    };
+
+    const handleDeleteUnicorn = (id) => {
+        fetch(`${API_URL}/${id}`, {
+            method: "DELETE",
+        })
+            .then(() => {
+                console.log("Unicornio eliminado");
+                setUnicorns(unicorns.filter((unic) => unic._id !== id));
+            })
+            .catch((error) => console.error("Error al eliminar el unicornio", error));
+    };
+
+    return (
+        <UnicornsView
+            unicorns={unicorns}
+            handleAddUnicorn={handleAddUnicorn}
+            handleEditUnicorn={handleEditUnicorn}
+            handleDeleteUnicorn={handleDeleteUnicorn}
+            handleGetUnicorns={handleGetUnicorns}
+        />
+    );
+};
+
+export default UnicornsContainer;
