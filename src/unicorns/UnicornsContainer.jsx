@@ -1,91 +1,10 @@
-import { useState, useEffect } from "react";
+import { useContext, useEffect } from "react";
 import UnicornsView from "./UnicornsView";
-
-const API_URL = "https://crudcrud.com/api/4e22aa362d6a43f291d49d99ea9f6a39/unicorns";
+import { UnicornContext } from "../context/UnicornContext";
 
 const UnicornsContainer = () => {
-    const [unicorns, setUnicorns] = useState([]);
-
-    useEffect(() => {
-        handleGetUnicorns();
-    }, []);
-
-    const handleGetUnicorns = () => {
-        fetch(API_URL)
-            .then((response) => response.json())
-            .then((data) => setUnicorns(data))
-            .catch((error) => {
-                console.error("Error al obtener unicornios", error);
-                alert("Error al obtener los unicornios.");
-            });
-    };
-
-    const handleAddUnicorn = ({ name, color, age, power }) => {
-        fetch(API_URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                name,
-                data: {
-                    color,
-                    age: Number(age),
-                    power,
-                },
-            }),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                setUnicorns([...unicorns, data]);
-            })
-            .catch((error) => {
-                console.error("Error al añadir el unicornio", error);
-                alert("Error al añadir el unicornio.");
-            });
-    };
-
-    const handleEditUnicorn = ({ id, name, color, age, power }) => {
-        fetch(`${API_URL}/${id}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                name,
-                data: {
-                    color,
-                    age: Number(age),
-                    power,
-                },
-            }),
-        })
-            .then(() => {
-                const updated = unicorns.map((unic) =>
-                    unic._id === id
-                        ? { ...unic, name, data: { color, age, power } }
-                        : unic
-                );
-                setUnicorns(updated);
-            })
-            .catch((error) => {
-                console.error("Error al editar el unicornio", error);
-                alert("Error al editar el unicornio.");
-            });
-    };
-
-    const handleDeleteUnicorn = (id) => {
-        fetch(`${API_URL}/${id}`, {
-            method: "DELETE",
-        })
-            .then(() => {
-                setUnicorns(unicorns.filter((unic) => unic._id !== id));
-            })
-            .catch((error) => {
-                console.error("Error al eliminar el unicornio", error);
-                alert("Error al eliminar el unicornio.");
-            });
-    };
+    const { unicorns, handleAddUnicorn, handleEditUnicorn, handleDeleteUnicorn } =
+        useContext(UnicornContext);
 
     return (
         <UnicornsView
@@ -93,7 +12,6 @@ const UnicornsContainer = () => {
             handleAddUnicorn={handleAddUnicorn}
             handleEditUnicorn={handleEditUnicorn}
             handleDeleteUnicorn={handleDeleteUnicorn}
-            handleGetUnicorns={handleGetUnicorns}
         />
     );
 };

@@ -110,7 +110,7 @@ const UnicornsView = ({
             </div>
 
             <DataTable
-                value={unicorns}
+                value={Array.isArray(unicorns) ? unicorns : []} 
                 selectionMode="single"
                 dataKey="_id"
                 selection={selectedUnicorn}
@@ -136,6 +136,7 @@ const UnicornsView = ({
                     )}
                 />
             </DataTable>
+
         </div>
     );
 };
