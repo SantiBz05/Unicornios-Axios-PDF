@@ -29,15 +29,36 @@ const UnicornsView = ({
         setPower(unicorn.data?.power || "");
     };
 
-    const onManualSelectAndDelete = (unicorn) => {
+    const onManualSelect = (unicorn) => {
         setSelectedUnicorn(unicorn);
         setName(unicorn.name || "");
         setColor(unicorn.data?.color || "");
         setAge(unicorn.data?.age || "");
         setPower(unicorn.data?.power || "");
-        
-        // Elimina el unicornio seleccionado
-        handleDeleteUnicorn(unicorn._id);
+    };
+
+    const onAdd = () => {
+        if (!name || !color || !age || !power) {
+            alert("Todos los campos son obligatorios.");
+            return;
+        }
+
+        handleAddUnicorn({ name, color, age, power });
+        clearForm();
+    };
+
+    const onEdit = () => {
+        if (!selectedUnicorn?._id) {
+            alert("Selecciona un unicornio para editar.");
+            return;
+        }
+
+        if (!name || !color || !age || !power) {
+            alert("Todos los campos son obligatorios.");
+            return;
+        }
+
+        handleEditUnicorn({ id: selectedUnicorn._id, name, color, age, power });
         clearForm();
     };
 
@@ -63,6 +84,29 @@ const UnicornsView = ({
         <div className="p-4">
             <h2>Gestión de Unicornios</h2>
 
+            <div className="p-fluid p-formgrid p-grid mb-4">
+                <div className="p-field p-col-12 p-md-3">
+                    <label>Nombre</label>
+                    <InputText value={name} onChange={(e) => setName(e.target.value)} />
+                </div>
+                <div className="p-field p-col-12 p-md-3">
+                    <label>Color</label>
+                    <InputText value={color} onChange={(e) => setColor(e.target.value)} />
+                </div>
+                <div className="p-field p-col-12 p-md-2">
+                    <label>Edad</label>
+                    <InputNumber value={age} onValueChange={(e) => setAge(e.value)} />
+                </div>
+                <div className="p-field p-col-12 p-md-4">
+                    <label>Poder</label>
+                    <InputText value={power} onChange={(e) => setPower(e.target.value)} />
+                </div>
+            </div>
+
+            <div className="mb-4 flex gap-2">
+                <Button label="Eliminar" icon="pi pi-trash" onClick={onDelete} severity="danger" disabled={!selectedUnicorn} />
+            </div>
+
             <DataTable
                 value={Array.isArray(unicorns) ? unicorns : []} 
                 selectionMode="single"
@@ -82,15 +126,14 @@ const UnicornsView = ({
                     header="Acciones"
                     body={(rowData) => (
                         <Button
-                            icon="pi pi-trash"
-                            label="Eliminar"
+                            icon="pi pi-check"
+                            label="Seleccionar"
                             className="p-button-sm"
-                            onClick={() => onManualSelectAndDelete(rowData)} 
+                            onClick={() => onManualSelect(rowData)}
                         />
                     )}
                 />
             </DataTable>
-
 
         </div>
     );
