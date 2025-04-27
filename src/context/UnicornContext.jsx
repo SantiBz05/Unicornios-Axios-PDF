@@ -4,7 +4,7 @@ export const UnicornContext = createContext();
 
 export const UnicornProvider = ({ children }) => {
     const [unicorns, setUnicorns] = useState([]);
-    const API_URL = "https://crudcrud.com/api/2e2f5c7d5f0d4d8d91d18ccb61296259/unicorns";
+    const API_URL = "https://crudcrud.com/api/80c215abd2f64bf0818b95bd25fb529c/unicorns";
 
     const getUnicorns = async () => {
         try {
@@ -37,29 +37,38 @@ export const UnicornProvider = ({ children }) => {
         }
     };
 
-    const handleEditUnicorn = async ({ id, name, color, age, power }) => {
-        try {
-            await fetch(`${API_URL}/${id}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
+    const handleEditUnicorn = ({ _id, name, color, age, power }) => {
+        // Asegúrate de que _id esté siendo usado en la URL
+        fetch(`${API_URL}/${_id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                name,
+                data: {
+                    color,
+                    age: Number(age),  // Asegúrate de convertir la edad a número
+                    power,
                 },
-                body: JSON.stringify({
-                    name,
-                    data: { color, age: Number(age), power },
-                }),
+            }),
+        })
+            .then(() => {
+                // Actualiza el estado con los cambios realizados
+                const updated = unicorns.map((unic) =>
+                    unic._id === _id
+                        ? { ...unic, name, data: { color, age, power } }
+                        : unic
+                );
+                setUnicorns(updated);  // Actualiza el estado de unicorns con el unicornio editado
+            })
+            .catch((error) => {
+                console.error("Error al editar el unicornio", error);
+                alert("Error al editar el unicornio.");
             });
-            setUnicorns((prevUnicorns) =>
-                prevUnicorns.map((unic) =>
-                    unic._id === id ? { ...unic, name, data: { color, age, power } } : unic
-                )
-            );
-        } catch (error) {
-            console.error("Error al editar el unicornio", error);
-            alert("Error al editar el unicornio.");
-        }
     };
-
+    
+    
     const handleDeleteUnicorn = async (id) => {
         try {
             await fetch(`${API_URL}/${id}`, {

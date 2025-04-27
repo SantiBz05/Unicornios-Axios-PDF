@@ -2,8 +2,6 @@ import { useState } from "react";
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import { InputNumber } from 'primereact/inputnumber';
-import { InputText } from 'primereact/inputtext';
 
 const UnicornsView = ({
     handleAddUnicorn,

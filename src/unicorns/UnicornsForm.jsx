@@ -1,142 +1,156 @@
-import { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
+import { UnicornContext } from "../context/UnicornContext";
 import { Button } from 'primereact/button';
-import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import { InputNumber } from 'primereact/inputnumber';
-import { InputText } from 'primereact/inputtext';
+import { Column } from 'primereact/column';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
 
-const UnicornsView = ({
-    handleAddUnicorn,
-    handleEditUnicorn,
-    handleDeleteUnicorn,
-    handleGetUnicorns,
-    unicorns,
-}) => {
-    const [name, setName] = useState("");
-    const [color, setColor] = useState("");
-    const [age, setAge] = useState("");
-    const [power, setPower] = useState("");
-    const [selectedUnicorn, setSelectedUnicorn] = useState(null);
+const UnicornsForm = () => {
+    const { unicorns, handleAddUnicorn, handleEditUnicorn, handleDeleteUnicorn } = useContext(UnicornContext);
+    const [editingUnicorn, setEditingUnicorn] = useState(null);
 
-    const onRowSelect = (e) => {
-        const unicorn = e.value;
-        if (!unicorn) return;
+    // Estado de initialValues
+    const [initialValues, setInitialValues] = useState({
+        name: '',
+        color: '',
+        age: '',
+        power: ''
+    });
 
-        setSelectedUnicorn(unicorn);
-        setName(unicorn.name || "");
-        setColor(unicorn.data?.color || "");
-        setAge(unicorn.data?.age || "");
-        setPower(unicorn.data?.power || "");
+    // Iniciar edición
+    const startEdit = (unicorn) => {
+        console.log('Editando unicornio:', unicorn);  // Ver qué unicornio se está editando
+        setEditingUnicorn(unicorn);
     };
 
-    const onManualSelect = (unicorn) => {
-        setSelectedUnicorn(unicorn);
-        setName(unicorn.name || "");
-        setColor(unicorn.data?.color || "");
-        setAge(unicorn.data?.age || "");
-        setPower(unicorn.data?.power || "");
-    };
-
-    const onAdd = () => {
-        if (!name || !color || !age || !power) {
-            alert("Todos los campos son obligatorios.");
-            return;
+    // Cuando editingUnicorn cambie, actualizar initialValues
+    useEffect(() => {
+        if (editingUnicorn) {
+            console.log('Unicornio para editar:', editingUnicorn);  // Ver el unicornio que se ha seleccionado para editar
+            setInitialValues({
+                name: editingUnicorn.name,
+                color: editingUnicorn.data?.color || '', // Asegúrate de acceder a data.color
+                age: editingUnicorn.data?.age || '', // Asegúrate de acceder a data.age
+                power: editingUnicorn.data?.power || '' // Asegúrate de acceder a data.power
+            });
         }
+    }, [editingUnicorn]);
 
-        handleAddUnicorn({ name, color, age, power });
-        clearForm();
-    };
+    const validationSchema = Yup.object({
+        name: Yup.string()
+            .min(6, 'Debe tener mínimo 6 caracteres')
+            .max(20, 'Debe tener menos de 20 caracteres')
+            .required('Nombre es obligatorio'),
+        age: Yup.number()
+            .required('Edad es obligatorio'),
+        color: Yup.string()
+            .required('Color es obligatorio'),
+        power: Yup.string()
+            .required('Poder es obligatorio'),
+    });
 
-    const onEdit = () => {
-        if (!selectedUnicorn?._id) {
-            alert("Selecciona un unicornio para editar.");
-            return;
-        }
-
-        if (!name || !color || !age || !power) {
-            alert("Todos los campos son obligatorios.");
-            return;
-        }
-
-        handleEditUnicorn({ id: selectedUnicorn._id, name, color, age, power });
-        clearForm();
-    };
-
-    const onDelete = () => {
-        if (!selectedUnicorn?._id) {
-            alert("Selecciona un unicornio para eliminar.");
-            return;
-        }
-
-        handleDeleteUnicorn(selectedUnicorn._id);
-        clearForm();
-    };
-
-    const clearForm = () => {
-        setName("");
-        setColor("");
-        setAge("");
-        setPower("");
-        setSelectedUnicorn(null);
-    };
+    const actionBodyTemplate = (rowData) => (
+        <div className="flex gap-2">
+            <Button
+                label="Editar"
+                icon="pi pi-pencil"
+                onClick={() => startEdit(rowData)}
+                style={{
+                    backgroundColor: '#f0ad4e',
+                    border: 'none',
+                    color: '#000',
+                }}
+            />
+        </div>
+    );
 
     return (
-        <div className="p-4">
-            <h2>Gestión de Unicornios</h2>
+        <div
+            className="p-6"
+            style={{ backgroundColor: '#121212', minHeight: '100vh', color: '#ffffff' }}
+        >
+            <h2 className="text-2xl mb-8"> 🦄 Gestión de Unicornios</h2>
 
-            <div className="p-fluid p-formgrid p-grid mb-4">
-                <div className="p-field p-col-12 p-md-3">
-                    <label>Nombre</label>
-                    <InputText value={name} onChange={(e) => setName(e.target.value)} />
-                </div>
-                <div className="p-field p-col-12 p-md-3">
-                    <label>Color</label>
-                    <InputText value={color} onChange={(e) => setColor(e.target.value)} />
-                </div>
-                <div className="p-field p-col-12 p-md-2">
-                    <label>Edad</label>
-                    <InputNumber value={age} onValueChange={(e) => setAge(e.value)} />
-                </div>
-                <div className="p-field p-col-12 p-md-4">
-                    <label>Poder</label>
-                    <InputText value={power} onChange={(e) => setPower(e.target.value)} />
-                </div>
-            </div>
-
-            <div className="mb-4 flex gap-2">
-                <Button label="Eliminar" icon="pi pi-trash" onClick={onDelete} severity="danger" disabled={!selectedUnicorn} />
-            </div>
-
-            <DataTable
-                value={Array.isArray(unicorns) ? unicorns : []} 
-                selectionMode="single"
-                dataKey="_id"
-                selection={selectedUnicorn}
-                onSelectionChange={onRowSelect}
-                paginator
-                rows={5}
-                responsiveLayout="scroll"
-                emptyMessage="No hay unicornios aún."
+            {/* Formulario */}
+            <Formik
+                initialValues={initialValues}
+                validationSchema={validationSchema}
+                onSubmit={(values, { resetForm }) => {
+                    console.log('Formulario enviado con los siguientes valores:', values); // Ver los valores al enviar el formulario
+                    if (editingUnicorn) {
+                        // Agregar el _id al enviar los valores de edición
+                        const unicornWithId = {
+                            _id: editingUnicorn._id,  // Asegúrate de agregar el _id aquí
+                            ...values,
+                        };
+                        handleEditUnicorn(unicornWithId);  // Editar unicornio
+                    } else {
+                        handleAddUnicorn(values);   // Agregar nuevo unicornio
+                    }
+                    // Limpiar el formulario después de la acción
+                    resetForm();  // Esto restablece los valores a initialValues
+                    // Limpiar el estado de edición
+                    setEditingUnicorn(null);
+                    // Restablecer initialValues a sus valores vacíos después de un submit
+                    setInitialValues({
+                        name: '',
+                        color: '',
+                        age: '',
+                        power: ''
+                    });
+                }}
+                enableReinitialize
             >
-                <Column field="name" header="Nombre" />
-                <Column field="data.color" header="Color" />
-                <Column field="data.age" header="Edad" />
-                <Column field="data.power" header="Poder" />
-                <Column
-                    header="Acciones"
-                    body={(rowData) => (
-                        <Button
-                            icon="pi pi-check"
-                            label="Seleccionar"
-                            className="p-button-sm"
-                            onClick={() => onManualSelect(rowData)}
-                        />
-                    )}
-                />
-            </DataTable>
+                <Form>
+                    <div>
+                        <label>Nombre</label>
+                        <Field name="name" />
+                        <ErrorMessage name="name" component="div" />
+                    </div>
+                    <div>
+                        <label>Edad</label>
+                        <Field name="age" />
+                        <ErrorMessage name="age" component="div" />
+                    </div>
+                    <div>
+                        <label>Color</label>
+                        <Field name="color" />
+                        <ErrorMessage name="color" component="div" />
+                    </div>
+                    <div>
+                        <label>Poder</label>
+                        <Field name="power" />
+                        <ErrorMessage name="power" component="div" />
+                    </div>
+                    <Button
+                        style={{ color: 'white' }}
+                        label={editingUnicorn ? 'Editar unicornio' : 'Crear unicornio'}
+                        type="submit"
+                    />
+                </Form>
+            </Formik>
 
+            {/* Tabla */}
+            <div style={{ marginTop: '2rem' }}>
+                <DataTable
+                    value={unicorns}
+                    tableStyle={{ minWidth: '50rem' }}
+                    className="p-datatable-sm"
+                >
+                    <Column field="name" header="Nombre" style={{ color: '#fff' }} />
+                    <Column field="data.age" header="Edad" />
+                    <Column field="data.color" header="Color" />
+                    <Column field="data.power" header="Poder" />
+                    <Column
+                        body={actionBodyTemplate}
+                        header="Acciones"
+                        style={{ width: '12rem' }}
+                    />
+                </DataTable>
+            </div>
         </div>
     );
 };
 
-export default UnicornsView;
+export default UnicornsForm;
