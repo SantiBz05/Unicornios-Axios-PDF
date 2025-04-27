@@ -1,6 +1,6 @@
 import UnicornsModule from './unicorns/index';
 import { UnicornProvider } from './context/UnicornContext';
-// import ObjectsModule from './layouts/objetos';
+import ProductsModule from './products/index';
 import { Fragment } from 'react';
 
 function App() {
@@ -9,7 +9,7 @@ function App() {
       <UnicornProvider>
         <UnicornsModule />
       </UnicornProvider>
-      {/* <ObjectsModule /> */}
+      <ProductsModule />
     </Fragment>
   );
 }
