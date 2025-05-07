@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
+import { exportToPDF } from '../utils/ExportToPdf';
+
 
 const UnicornsView = ({
     handleAddUnicorn,
@@ -57,10 +59,16 @@ const UnicornsView = ({
         setSelectedUnicorn(null);
     };
 
+    const handleExport = () => {
+        exportToPDF(unicorns, 'Unicornios');
+      };
+
     return (
         <div className="p-4">
             <h2>Gestión de Unicornios</h2>
 
+            <Button label="Exportar PDF" icon="pi pi-file-pdf" className="p-button-rounded p-button-warning" onClick={handleExport} />
+            
             <DataTable
                 value={Array.isArray(unicorns) ? unicorns : []} 
                 selectionMode="single"

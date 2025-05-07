@@ -1,15 +1,15 @@
 import { createContext, useState, useEffect } from "react";
+import axios from 'axios';
 
 export const UnicornContext = createContext();
 
 export const UnicornProvider = ({ children }) => {
     const [unicorns, setUnicorns] = useState([]);
-    const API_URL = "https://crudcrud.com/api/80c215abd2f64bf0818b95bd25fb529c/unicorns";
+    const API_URL = "https://crudcrud.com/api/4df8fd1bc8704eaebedec60ae8ac7d6d/unicorns";
 
     const getUnicorns = async () => {
         try {
-            const response = await fetch(API_URL);
-            const data = await response.json();
+            const { data } = await axios.get(API_URL);
             setUnicorns(data);
         } catch (error) {
             console.error("Error al obtener unicornios", error);
@@ -19,61 +19,37 @@ export const UnicornProvider = ({ children }) => {
 
     const handleAddUnicorn = async ({ name, color, age, power }) => {
         try {
-            const response = await fetch(API_URL, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    name,
-                    data: { color, age: Number(age), power },
-                }),
-            });
-            const newUnicorn = await response.json();
-            setUnicorns((prevUnicorns) => [...prevUnicorns, newUnicorn]);
+            const { data : created } = await axios.post(API_URL, {
+                name,
+                data: { color, age: Number(age), power },
+              });
+            setUnicorns((prevUnicorns) => [...prevUnicorns, created]);
         } catch (error) {
             console.error("Error al añadir el unicornio", error);
             alert("Error al añadir el unicornio.");
         }
     };
 
-    const handleEditUnicorn = ({ _id, name, color, age, power }) => {
-        // Asegúrate de que _id esté siendo usado en la URL
-        fetch(`${API_URL}/${_id}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                name,
-                data: {
-                    color,
-                    age: Number(age),  // Asegúrate de convertir la edad a número
-                    power,
-                },
-            }),
-        })
-            .then(() => {
-                // Actualiza el estado con los cambios realizados
-                const updated = unicorns.map((unic) =>
-                    unic._id === _id
-                        ? { ...unic, name, data: { color, age, power } }
-                        : unic
-                );
-                setUnicorns(updated);  // Actualiza el estado de unicorns con el unicornio editado
-            })
-            .catch((error) => {
-                console.error("Error al editar el unicornio", error);
-                alert("Error al editar el unicornio.");
-            });
-    };
-    
-    
+    const handleEditUnicorn = async ({ _id, name, color, age, power }) => {
+        try {
+          await axios.put(`${API_URL}/${_id}`, {
+            name,
+            data: { color, age: Number(age), power, status },
+          });
+          setUnicorns((prev) =>
+            prev.map((u) =>
+              u._id === _id ? { ...u, name, data: { color, age, power } } : u
+            )
+          );
+        } catch (error) {
+          alert("Error al editar unicornio");
+          console.error(error);
+        }
+      }; 
+
     const handleDeleteUnicorn = async (id) => {
         try {
-            await fetch(`${API_URL}/${id}`, {
-                method: "DELETE",
-            });
+            await axios.delete(`${API_URL}/${id}`);
             setUnicorns((prevUnicorns) => prevUnicorns.filter((unic) => unic._id !== id));
         } catch (error) {
             console.error("Error al eliminar el unicornio", error);
@@ -89,6 +65,7 @@ export const UnicornProvider = ({ children }) => {
         <UnicornContext.Provider
             value={{
                 unicorns,
+                getUnicorns,
                 handleAddUnicorn,
                 handleEditUnicorn,
                 handleDeleteUnicorn,
@@ -97,4 +74,7 @@ export const UnicornProvider = ({ children }) => {
             {children}
         </UnicornContext.Provider>
     );
+};
+export const useUnicornContext = () => {
+    return useContext(UnicornContext);
 };
